@@ -4,11 +4,24 @@
 """OpusLib Package."""
 
 import setuptools  # type: ignore
+import platform
+import sys
+import os
 
 __author__ = 'Никита Кузнецов <self@svartalf.info>'
 __copyright__ = 'Copyright (c) 2012, SvartalF'
 __license__ = 'BSD 3-Clause License'
 
+# Определяем архитектуру Python (а не только ОС)
+arch, _ = platform.architecture()
+if arch == "64bit":
+    dll_path = "bin/win64/opus.dll"
+else:
+    dll_path = "bin/win32/opus.dll"
+
+# Проверим, что бинарник существует (чтобы сборка не падала молча)
+if not os.path.exists(os.path.join("opuslib", dll_path)):
+    sys.stderr.write(f"!!! Warning: expected {dll_path} not found\n")
 
 setuptools.setup(
     name='opuslib',
@@ -21,6 +34,10 @@ setuptools.setup(
     url='https://github.com/onbeep/opuslib',
     description='Python bindings to the libopus, IETF low-delay audio codec',
     packages=('opuslib', 'opuslib.api'),
+    package_data={
+        "opuslib": [dll_path],
+    },
+    include_package_data=True,
     test_suite='tests',
     zip_safe=False,
     tests_require=[
