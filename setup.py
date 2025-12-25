@@ -12,14 +12,14 @@ __author__ = 'Никита Кузнецов <self@svartalf.info>'
 __copyright__ = 'Copyright (c) 2012, SvartalF'
 __license__ = 'BSD 3-Clause License'
 
-# Определяем архитектуру Python (а не только ОС)
+# Defining the Python architecture (not just the OS)
 arch, _ = platform.architecture()
 if arch == "64bit":
     dll_path = "bin/win64/opus.dll"
 else:
     dll_path = "bin/win32/opus.dll"
 
-# Проверим, что бинарник существует (чтобы сборка не падала молча)
+# Let's check that the binary exists (so that the assembly does not fail silently)
 if not os.path.exists(os.path.join("opuslib", dll_path)):
     sys.stderr.write(f"!!! Warning: expected {dll_path} not found\n")
 
