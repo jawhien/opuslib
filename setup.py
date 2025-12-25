@@ -25,13 +25,13 @@ if not os.path.exists(os.path.join("opuslib", dll_path)):
 
 setuptools.setup(
     name='opuslib',
-    version='3.0.3',
+    version='3.0.4',
     author='Никита Кузнецов',
     author_email='self@svartalf.info',
     maintainer='Orion Labs, Inc.',
     maintainer_email='code@orionlabs.io',
     license='BSD 3-Clause License',
-    url='https://github.com/onbeep/opuslib',
+    url='https://github.com/jawhien/opuslib',
     description='Python bindings to the libopus, IETF low-delay audio codec',
     packages=('opuslib', 'opuslib.api'),
     package_data={
