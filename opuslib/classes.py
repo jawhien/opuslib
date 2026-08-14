@@ -200,10 +200,9 @@ class Encoder(object):
 
     final_range = property(_get_final_range)
 
-    _get_bandwidth = lambda self: opuslib.api.encoder.encoder_ctl(
-        self.encoder_state, opuslib.api.ctl.get_bandwidth)
-
-    bandwidth = property(_get_bandwidth)
+    @property
+    def bandwidth(self):
+        return opuslib.api.encoder.encoder_ctl(self.encoder_state, opuslib.api.ctl.get_bandwidth)
 
     _get_pitch = lambda self: opuslib.api.encoder.encoder_ctl(
         self.encoder_state, opuslib.api.ctl.get_pitch)
@@ -266,10 +265,9 @@ class Encoder(object):
 
     max_bandwidth = property(_get_max_bandwidth, _set_max_bandwidth)
 
-    _set_bandwidth = lambda self, x: opuslib.api.encoder.encoder_ctl(
-        self.encoder_state, opuslib.api.ctl.set_bandwidth, x)
-
-    bandwidth = property(None, _set_bandwidth)
+    @bandwidth.setter
+    def bandwidth(self, x):
+        opuslib.api.encoder.encoder_ctl(self.encoder_state, opuslib.api.ctl.set_bandwidth, x)
 
     _get_signal = lambda self: opuslib.api.encoder.encoder_ctl(
         self.encoder_state, opuslib.api.ctl.get_signal)
