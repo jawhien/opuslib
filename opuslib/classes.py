@@ -295,13 +295,13 @@ class Encoder(object):
 
     lookahead = property(_get_lookahead)
 
-    _get_inband_fec = lambda self: opuslib.api.encoder.encoder_ctl(
-        self.encoder_state, opuslib.api.ctl.get_inband_fec)
+    @property
+    def inband_fec(self):
+        return opuslib.api.encoder.encoder_ctl(self.encoder_state, opuslib.api.ctl.get_inband_fec)
 
-    _set_inband_fec = lambda self, x: opuslib.api.encoder.encoder_ctl(
-        self.encoder_state, opuslib.api.ctl.set_inband_fec)
-
-    inband_fec = property(_get_inband_fec, _set_inband_fec)
+    @inband_fec.setter
+    def inband_fec(self, x):
+        opuslib.api.encoder.encoder_ctl(self.encoder_state, opuslib.api.ctl.set_inband_fec, x)
 
     _get_packet_loss_perc = lambda self: opuslib.api.encoder.encoder_ctl(
         self.encoder_state, opuslib.api.ctl.get_packet_loss_perc)
