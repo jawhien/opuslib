@@ -8,20 +8,47 @@ import platform
 import sys
 import os
 
+try:
+    from setuptools.command.bdist_wheel import bdist_wheel
+except ImportError:
+    try:
+        from wheel.bdist_wheel import bdist_wheel
+    except ImportError:
+        bdist_wheel = None
+
 __author__ = 'Никита Кузнецов <self@svartalf.info>'
 __copyright__ = 'Copyright (c) 2012, SvartalF'
 __license__ = 'BSD 3-Clause License'
 
-# Defining the Python architecture (not just the OS)
-arch, _ = platform.architecture()
-if arch == "64bit":
-    dll_path = "bin/win64/opus.dll"
-else:
-    dll_path = "bin/win32/opus.dll"
+cmdclass = {}
+package_data = {}
 
-# Let's check that the binary exists (so that the assembly does not fail silently)
-if not os.path.exists(os.path.join("opuslib", dll_path)):
-    sys.stderr.write(f"!!! Warning: expected {dll_path} not found\n")
+if sys.platform.startswith("win"):
+    # Defining the Python architecture (not just the OS)
+    arch, _ = platform.architecture()
+    if arch == "64bit":
+        dll_path = "bin/win64/opus.dll"
+    else:
+        dll_path = "bin/win32/opus.dll"
+
+    # Let's check that the binary exists (so that the assembly does not fail silently)
+    if not os.path.exists(os.path.join("opuslib", dll_path)):
+        sys.stderr.write(f"!!! Warning: expected {dll_path} not found\n")
+
+    package_data["opuslib"] = [dll_path]
+
+
+if sys.platform.startswith("win") and bdist_wheel is not None:
+    class bdist_wheel_platform_tag(bdist_wheel):
+        def finalize_options(self):
+            super().finalize_options()
+            self.root_is_pure = False
+
+        def get_tag(self):
+            _python, _abi, platform_tag = super().get_tag()
+            return "py3", "none", platform_tag
+
+    cmdclass["bdist_wheel"] = bdist_wheel_platform_tag
 
 setuptools.setup(
     name='opuslib',
@@ -34,10 +61,9 @@ setuptools.setup(
     url='https://github.com/jawhien/opuslib',
     description='Python bindings to the libopus, IETF low-delay audio codec',
     packages=('opuslib', 'opuslib.api'),
-    package_data={
-        "opuslib": [dll_path],
-    },
-    include_package_data=True,
+    package_data=package_data,
+    cmdclass=cmdclass,
+    include_package_data=False,
     test_suite='tests',
     zip_safe=False,
     tests_require=[
