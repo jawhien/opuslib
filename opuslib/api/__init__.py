@@ -15,6 +15,11 @@ __author__ = 'Никита Кузнецов <self@svartalf.info>'
 __copyright__ = 'Copyright (c) 2012, SvartalF'
 __license__ = 'BSD 3-Clause License'
 
+
+class OpusLibraryError(RuntimeError):
+    """Raised when libopus cannot be loaded."""
+
+
 _pkg_dir = os.path.dirname(os.path.dirname(__file__))
 
 lib_location = None
@@ -30,11 +35,15 @@ if sys.platform.startswith("win"):
     if os.path.exists(dll_path):
         lib_location = dll_path
     else:
-        raise Exception(f"Could not find bundled Opus library at {dll_path}")
+        raise OpusLibraryError(
+            f"Could not find bundled Opus library at {dll_path}"
+        )
 else:
     lib_location = find_library("opus")
     if lib_location is None:
-        raise Exception("Could not find system Opus library. Make sure it is installed.")
+        raise OpusLibraryError(
+            "Could not find system Opus library. Make sure it is installed."
+        )
 
 libopus = ctypes.CDLL(lib_location)
 
