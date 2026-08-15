@@ -31,7 +31,7 @@ if sys.platform.startswith("win"):
     else:
         dll_path = "bin/win32/opus.dll"
 
-    # Let's check that the binary exists (so that the assembly does not fail silently)
+    # Check that the binary exists so assembly does not fail silently.
     if not os.path.exists(os.path.join("opuslib", dll_path)):
         sys.stderr.write(f"!!! Warning: expected {dll_path} not found\n")
 
@@ -64,20 +64,14 @@ setuptools.setup(
     package_data=package_data,
     cmdclass=cmdclass,
     include_package_data=False,
-    test_suite='tests',
     zip_safe=False,
-    tests_require=[
-        'coverage >= 4.4.1',
-        'nose >= 1.3.7',
-    ],
-    classifiers=(
+    classifiers=[
         'Development Status :: 1 - Planning',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3.6',
         'Topic :: Software Development :: Libraries',
         'Topic :: Multimedia :: Sound/Audio :: Conversion',
-    ),
+    ],
 )
