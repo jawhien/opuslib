@@ -23,6 +23,17 @@ class BinaryBufferTest(unittest.TestCase):
             960,
             opuslib.api.decoder.packet_get_samples_per_frame(packet, 48000)
         )
+        self.assertEqual(
+            960,
+            opuslib.api.decoder.packet_get_nb_samples(packet, fs=48000)
+        )
+        self.assertEqual(0, opuslib.api.decoder.packet_has_lbrr(packet))
+
+        parsed = opuslib.api.decoder.packet_parse(packet)
+
+        self.assertEqual(252, parsed['toc'])
+        self.assertEqual(1, parsed['payload_offset'])
+        self.assertEqual((b'\x00\x00',), parsed['frames'])
 
     def test_encode_decode_roundtrip_with_binary_packet(self):
         fs = 48000
@@ -40,8 +51,21 @@ class BinaryBufferTest(unittest.TestCase):
 
         self.assertIn(b'\x00', packet)
         self.assertEqual(1, opuslib.api.decoder.packet_get_nb_frames(packet))
+        self.assertEqual(
+            frame_size,
+            opuslib.api.decoder.packet_get_nb_samples(packet, fs=fs)
+        )
+        self.assertEqual(0, opuslib.api.decoder.packet_has_lbrr(packet))
 
         decoder = opuslib.Decoder(fs, channels)
+        self.assertEqual(
+            opuslib.api.decoder.packet_get_nb_samples(packet, fs=fs),
+            opuslib.api.decoder.get_nb_samples(
+                decoder.decoder_state,
+                packet,
+                len(packet)
+            )
+        )
         decoded = decoder.decode(packet, frame_size)
 
         self.assertEqual(len(pcm), len(decoded))

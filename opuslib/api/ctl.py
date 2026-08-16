@@ -86,6 +86,22 @@ get_bandwidth = get(opuslib.GET_BANDWIDTH_REQUEST, ctypes.c_int)
 # Gets the pitch of the last decoded frame, if available
 get_pitch = get(opuslib.GET_PITCH_REQUEST, ctypes.c_int)
 
+# Gets the duration of the last decoded packet
+get_last_packet_duration = get(
+    opuslib.GET_LAST_PACKET_DURATION_REQUEST,
+    ctypes.c_int
+)
+
+# Configures phase inversion
+set_phase_inversion_disabled = ctl_set(
+    opuslib.SET_PHASE_INVERSION_DISABLED_REQUEST)
+
+# Gets phase inversion configuration
+get_phase_inversion_disabled = get(
+    opuslib.GET_PHASE_INVERSION_DISABLED_REQUEST,
+    ctypes.c_int
+)
+
 # Configures the depth of signal being encoded
 set_lsb_depth = ctl_set(opuslib.SET_LSB_DEPTH_REQUEST)
 
@@ -101,6 +117,21 @@ get_gain = get(opuslib.GET_GAIN_REQUEST, ctypes.c_int)
 
 # Configures decoder gain adjustment
 set_gain = ctl_set(opuslib.SET_GAIN_REQUEST)
+
+# Configures blind bandwidth extension for wideband signals
+set_osce_bwe = ctl_set(opuslib.SET_OSCE_BWE_REQUEST)
+
+# Gets blind bandwidth extension configuration
+get_osce_bwe = get(opuslib.GET_OSCE_BWE_REQUEST, ctypes.c_int)
+
+# Configures whether decoder ignores extensions in the padding area
+set_ignore_extensions = ctl_set(opuslib.SET_IGNORE_EXTENSIONS_REQUEST)
+
+# Gets whether decoder ignores extensions in the padding area
+get_ignore_extensions = get(
+    opuslib.GET_IGNORE_EXTENSIONS_REQUEST,
+    ctypes.c_int
+)
 
 #
 # Encoder related CTLs
@@ -191,6 +222,41 @@ set_dtx = ctl_set(opuslib.SET_DTX_REQUEST)
 
 # Gets encoder's configured use of discontinuous transmission
 get_dtx = get(opuslib.GET_DTX_REQUEST, ctypes.c_int)
+
+# Gets whether the last encoded frame was affected by DTX
+get_in_dtx = get(opuslib.GET_IN_DTX_REQUEST, ctypes.c_int)
+
+# Configures expert frame duration
+set_expert_frame_duration = ctl_set(
+    opuslib.SET_EXPERT_FRAME_DURATION_REQUEST)
+
+# Gets expert frame duration configuration
+get_expert_frame_duration = get(
+    opuslib.GET_EXPERT_FRAME_DURATION_REQUEST,
+    ctypes.c_int
+)
+
+# Configures prediction
+set_prediction_disabled = ctl_set(
+    opuslib.SET_PREDICTION_DISABLED_REQUEST)
+
+# Gets prediction configuration
+get_prediction_disabled = get(
+    opuslib.GET_PREDICTION_DISABLED_REQUEST,
+    ctypes.c_int
+)
+
+# Configures Deep Redundancy (DRED) duration
+set_dred_duration = ctl_set(opuslib.SET_DRED_DURATION_REQUEST)
+
+# Gets Deep Redundancy (DRED) duration
+get_dred_duration = get(opuslib.GET_DRED_DURATION_REQUEST, ctypes.c_int)
+
+# Configures quality extension
+set_qext = ctl_set(opuslib.SET_QEXT_REQUEST)
+
+# Gets quality extension configuration
+get_qext = get(opuslib.GET_QEXT_REQUEST, ctypes.c_int)
 
 #
 # Other stuff

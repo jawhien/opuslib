@@ -170,6 +170,129 @@ def packet_get_samples_per_frame(
     return result
 
 
+libopus_packet_get_nb_samples = \
+    opuslib.api.libopus.opus_packet_get_nb_samples
+libopus_packet_get_nb_samples.argtypes = (
+    opuslib.api.c_ubyte_pointer,
+    ctypes.c_int32,
+    ctypes.c_int32
+)
+libopus_packet_get_nb_samples.restype = ctypes.c_int
+
+
+# FIXME: Remove typing.Any once we have a stub for ctypes
+def packet_get_nb_samples(
+        packet: bytes,
+        length: typing.Optional[int] = None,
+        fs: int = 48000
+) -> typing.Union[int, typing.Any]:
+    """Gets the number of samples of an Opus packet."""
+    packet_buffer = ctypes.create_string_buffer(packet)
+    packet_pointer = ctypes.cast(packet_buffer, opuslib.api.c_ubyte_pointer)
+
+    if length is None:
+        length = len(packet)
+
+    result = libopus_packet_get_nb_samples(
+        packet_pointer,
+        ctypes.c_int32(length),
+        ctypes.c_int32(fs)
+    )
+
+    if result < 0:
+        raise opuslib.exceptions.OpusError(result)
+
+    return result
+
+
+libopus_packet_has_lbrr = opuslib.api.libopus.opus_packet_has_lbrr
+libopus_packet_has_lbrr.argtypes = (
+    opuslib.api.c_ubyte_pointer,
+    ctypes.c_int32
+)
+libopus_packet_has_lbrr.restype = ctypes.c_int
+
+
+# FIXME: Remove typing.Any once we have a stub for ctypes
+def packet_has_lbrr(
+        packet: bytes,
+        length: typing.Optional[int] = None
+) -> typing.Union[int, typing.Any]:
+    """Checks whether an Opus packet has LBRR."""
+    packet_buffer = ctypes.create_string_buffer(packet)
+    packet_pointer = ctypes.cast(packet_buffer, opuslib.api.c_ubyte_pointer)
+
+    if length is None:
+        length = len(packet)
+
+    result = libopus_packet_has_lbrr(
+        packet_pointer,
+        ctypes.c_int32(length)
+    )
+
+    if result < 0:
+        raise opuslib.exceptions.OpusError(result)
+
+    return result
+
+
+libopus_packet_parse = opuslib.api.libopus.opus_packet_parse
+libopus_packet_parse.argtypes = (
+    opuslib.api.c_ubyte_pointer,
+    ctypes.c_int32,
+    opuslib.api.c_ubyte_pointer,
+    ctypes.POINTER(opuslib.api.c_ubyte_pointer),
+    opuslib.api.c_int16_pointer,
+    opuslib.api.c_int_pointer
+)
+libopus_packet_parse.restype = ctypes.c_int
+
+
+# FIXME: Remove typing.Any once we have a stub for ctypes
+def packet_parse(
+        packet: bytes,
+        length: typing.Optional[int] = None
+) -> typing.Dict[str, typing.Any]:
+    """Parses an Opus packet into frames."""
+    packet_buffer = ctypes.create_string_buffer(packet)
+    packet_pointer = ctypes.cast(packet_buffer, opuslib.api.c_ubyte_pointer)
+    out_toc = ctypes.c_ubyte()
+    frames = (opuslib.api.c_ubyte_pointer * 48)()
+    sizes = (ctypes.c_int16 * 48)()
+    payload_offset = ctypes.c_int()
+
+    if length is None:
+        length = len(packet)
+
+    result = libopus_packet_parse(
+        packet_pointer,
+        ctypes.c_int32(length),
+        ctypes.pointer(out_toc),
+        frames,
+        sizes,
+        ctypes.byref(payload_offset)
+    )
+
+    if result < 0:
+        raise opuslib.exceptions.OpusError(result)
+
+    frame_data = []
+    for index in range(result):
+        frame_size = sizes[index]
+        if frame_size == 0:
+            frame_data.append(b'')
+        else:
+            frame_data.append(
+                ctypes.string_at(frames[index], frame_size)
+            )
+
+    return {
+        'toc': out_toc.value,
+        'payload_offset': payload_offset.value,
+        'frames': tuple(frame_data)
+    }
+
+
 libopus_get_nb_samples = opuslib.api.libopus.opus_decoder_get_nb_samples
 libopus_get_nb_samples.argtypes = (
     DecoderPointer,

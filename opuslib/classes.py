@@ -121,6 +121,65 @@ class Decoder(object):
 
     gain = property(_get_gain, _set_gain)
 
+    @property
+    def last_packet_duration(self):
+        return opuslib.api.decoder.decoder_ctl(
+            self.decoder_state,
+            opuslib.api.ctl.get_last_packet_duration
+        )
+
+    @property
+    def phase_inversion_disabled(self):
+        return opuslib.api.decoder.decoder_ctl(
+            self.decoder_state,
+            opuslib.api.ctl.get_phase_inversion_disabled
+        )
+
+    @phase_inversion_disabled.setter
+    def phase_inversion_disabled(self, value):
+        opuslib.api.decoder.decoder_ctl(
+            self.decoder_state,
+            opuslib.api.ctl.set_phase_inversion_disabled,
+            value
+        )
+
+    @property
+    def in_dtx(self):
+        return opuslib.api.decoder.decoder_ctl(
+            self.decoder_state,
+            opuslib.api.ctl.get_in_dtx
+        )
+
+    @property
+    def osce_bwe(self):
+        return opuslib.api.decoder.decoder_ctl(
+            self.decoder_state,
+            opuslib.api.ctl.get_osce_bwe
+        )
+
+    @osce_bwe.setter
+    def osce_bwe(self, value):
+        opuslib.api.decoder.decoder_ctl(
+            self.decoder_state,
+            opuslib.api.ctl.set_osce_bwe,
+            value
+        )
+
+    @property
+    def ignore_extensions(self):
+        return opuslib.api.decoder.decoder_ctl(
+            self.decoder_state,
+            opuslib.api.ctl.get_ignore_extensions
+        )
+
+    @ignore_extensions.setter
+    def ignore_extensions(self, value):
+        opuslib.api.decoder.decoder_ctl(
+            self.decoder_state,
+            opuslib.api.ctl.set_ignore_extensions,
+            value
+        )
+
 
 class Encoder(object):
 
@@ -315,3 +374,78 @@ class Encoder(object):
         self.encoder_state, opuslib.api.ctl.set_dtx, x)
 
     dtx = property(_get_dtx, _set_dtx)
+
+    @property
+    def phase_inversion_disabled(self):
+        return opuslib.api.encoder.encoder_ctl(
+            self.encoder_state,
+            opuslib.api.ctl.get_phase_inversion_disabled
+        )
+
+    @phase_inversion_disabled.setter
+    def phase_inversion_disabled(self, value):
+        opuslib.api.encoder.encoder_ctl(
+            self.encoder_state,
+            opuslib.api.ctl.set_phase_inversion_disabled,
+            value
+        )
+
+    @property
+    def expert_frame_duration(self):
+        return opuslib.api.encoder.encoder_ctl(
+            self.encoder_state,
+            opuslib.api.ctl.get_expert_frame_duration
+        )
+
+    @expert_frame_duration.setter
+    def expert_frame_duration(self, value):
+        opuslib.api.encoder.encoder_ctl(
+            self.encoder_state,
+            opuslib.api.ctl.set_expert_frame_duration,
+            value
+        )
+
+    @property
+    def prediction_disabled(self):
+        return opuslib.api.encoder.encoder_ctl(
+            self.encoder_state,
+            opuslib.api.ctl.get_prediction_disabled
+        )
+
+    @prediction_disabled.setter
+    def prediction_disabled(self, value):
+        opuslib.api.encoder.encoder_ctl(
+            self.encoder_state,
+            opuslib.api.ctl.set_prediction_disabled,
+            value
+        )
+
+    @property
+    def dred_duration(self):
+        return opuslib.api.encoder.encoder_ctl(
+            self.encoder_state,
+            opuslib.api.ctl.get_dred_duration
+        )
+
+    @dred_duration.setter
+    def dred_duration(self, value):
+        opuslib.api.encoder.encoder_ctl(
+            self.encoder_state,
+            opuslib.api.ctl.set_dred_duration,
+            value
+        )
+
+    @property
+    def qext(self):
+        return opuslib.api.encoder.encoder_ctl(
+            self.encoder_state,
+            opuslib.api.ctl.get_qext
+        )
+
+    @qext.setter
+    def qext(self, value):
+        opuslib.api.encoder.encoder_ctl(
+            self.encoder_state,
+            opuslib.api.ctl.set_qext,
+            value
+        )
