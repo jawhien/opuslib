@@ -104,19 +104,6 @@ class Decoder(object):
 
     pitch = property(_get_pitch)
 
-    _get_lsb_depth = lambda self: opuslib.api.decoder.decoder_ctl(
-        self.decoder_state,
-        opuslib.api.ctl.get_lsb_depth
-    )
-
-    _set_lsb_depth = lambda self, x: opuslib.api.decoder.decoder_ctl(
-        self.decoder_state,
-        opuslib.api.ctl.set_lsb_depth,
-        x
-    )
-
-    lsb_depth = property(_get_lsb_depth, _set_lsb_depth)
-
     _get_gain = lambda self: opuslib.api.decoder.decoder_ctl(
         self.decoder_state,
         opuslib.api.ctl.get_gain
@@ -203,11 +190,6 @@ class Encoder(object):
     @property
     def bandwidth(self):
         return opuslib.api.encoder.encoder_ctl(self.encoder_state, opuslib.api.ctl.get_bandwidth)
-
-    _get_pitch = lambda self: opuslib.api.encoder.encoder_ctl(
-        self.encoder_state, opuslib.api.ctl.get_pitch)
-
-    pitch = property(_get_pitch)
 
     _get_lsb_depth = lambda self: opuslib.api.encoder.encoder_ctl(
         self.encoder_state, opuslib.api.ctl.get_lsb_depth)
