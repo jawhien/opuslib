@@ -29,6 +29,9 @@ class Encoder(ctypes.Structure):  # pylint: disable=too-few-public-methods
 EncoderPointer = ctypes.POINTER(Encoder)
 
 
+DEFAULT_MAX_DATA_BYTES = 1276
+
+
 libopus_get_size = opuslib.api.libopus.opus_encoder_get_size
 libopus_get_size.argtypes = (ctypes.c_int,)  # must be sequence (,) of types!
 libopus_get_size.restype = ctypes.c_int

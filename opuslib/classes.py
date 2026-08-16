@@ -156,7 +156,12 @@ class Encoder(object):
         opuslib.api.encoder.encoder_ctl(
             self.encoder_state, opuslib.api.ctl.reset_state)
 
-    def encode(self, pcm_data: bytes, frame_size: int) -> bytes:
+    def encode(
+            self,
+            pcm_data: bytes,
+            frame_size: int,
+            max_data_bytes: int = opuslib.api.encoder.DEFAULT_MAX_DATA_BYTES
+        ) -> bytes:
         """
         Encodes given PCM data as Opus.
         """
@@ -164,10 +169,15 @@ class Encoder(object):
             self.encoder_state,
             pcm_data,
             frame_size,
-            len(pcm_data)
+            max_data_bytes
         )
 
-    def encode_float(self, pcm_data: bytes, frame_size: int) -> bytes:
+    def encode_float(
+            self,
+            pcm_data: bytes,
+            frame_size: int,
+            max_data_bytes: int = opuslib.api.encoder.DEFAULT_MAX_DATA_BYTES
+        ) -> bytes:
         """
         Encodes given PCM data as Opus.
         """
@@ -175,7 +185,7 @@ class Encoder(object):
             self.encoder_state,
             pcm_data,
             frame_size,
-            len(pcm_data)
+            max_data_bytes
         )
 
     # CTL interfaces
