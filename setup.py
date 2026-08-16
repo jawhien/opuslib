@@ -8,6 +8,8 @@ import platform
 import sys
 import os
 
+from setuptools.command.build import build
+
 try:
     from setuptools.command.bdist_wheel import bdist_wheel
 except ImportError:
@@ -23,10 +25,25 @@ __license__ = 'BSD 3-Clause License'
 cmdclass = {}
 package_data = {}
 
+
+def _get_plat_name():
+    for index, arg in enumerate(sys.argv):
+        if arg == "--plat-name" and index + 1 < len(sys.argv):
+            return sys.argv[index + 1]
+        if arg.startswith("--plat-name="):
+            return arg.split("=", 1)[1]
+
+    return None
+
 if sys.platform.startswith("win"):
-    # Defining the Python architecture (not just the OS)
+    plat_name = _get_plat_name()
     arch, _ = platform.architecture()
-    if arch == "64bit":
+
+    if plat_name in ("win32", "win-arm32"):
+        dll_path = "bin/win32/opus.dll"
+    elif plat_name in ("win_amd64", "win-amd64", "win64"):
+        dll_path = "bin/win64/opus.dll"
+    elif arch == "64bit":
         dll_path = "bin/win64/opus.dll"
     else:
         dll_path = "bin/win32/opus.dll"
@@ -38,11 +55,38 @@ if sys.platform.startswith("win"):
     package_data["opuslib"] = [dll_path]
 
 
+if sys.platform.startswith("win"):
+    class build_platform_lib(build):
+        def finalize_options(self):
+            super().finalize_options()
+
+            plat_name = _get_plat_name()
+            if plat_name is not None:
+                plat_specifier = f".{plat_name}-{sys.implementation.cache_tag}"
+                self.build_platlib = os.path.join(
+                    self.build_base,
+                    "lib" + plat_specifier
+                )
+
+            if self.build_lib is None or self.build_lib == self.build_purelib:
+                self.build_lib = self.build_platlib
+
+    cmdclass["build"] = build_platform_lib
+
+
 if sys.platform.startswith("win") and bdist_wheel is not None:
     class bdist_wheel_platform_tag(bdist_wheel):
         def finalize_options(self):
             super().finalize_options()
-            self.root_is_pure = False
+            self.plat_name_supplied = True
+
+            plat_name = _get_plat_name()
+            if plat_name is not None:
+                self.bdist_dir = os.path.join(
+                    "build",
+                    "bdist." + plat_name,
+                    "wheel"
+                )
 
         def get_tag(self):
             _python, _abi, platform_tag = super().get_tag()
