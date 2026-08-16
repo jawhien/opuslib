@@ -78,14 +78,15 @@ def create_state(fs: int, channels: int) -> ctypes.Structure:
 
 libopus_packet_get_bandwidth = opuslib.api.libopus.opus_packet_get_bandwidth
 # `argtypes` must be a sequence (,) of types!
-libopus_packet_get_bandwidth.argtypes = (ctypes.c_char_p,)
+libopus_packet_get_bandwidth.argtypes = (opuslib.api.c_ubyte_pointer,)
 libopus_packet_get_bandwidth.restype = ctypes.c_int
 
 
 # FIXME: Remove typing.Any once we have a stub for ctypes
 def packet_get_bandwidth(data: bytes) -> typing.Union[int, typing.Any]:
     """Gets the bandwidth of an Opus packet."""
-    data_pointer = ctypes.c_char_p(data)
+    data_buffer = ctypes.create_string_buffer(data)
+    data_pointer = ctypes.cast(data_buffer, opuslib.api.c_ubyte_pointer)
 
     result = libopus_packet_get_bandwidth(data_pointer)
 
@@ -97,14 +98,15 @@ def packet_get_bandwidth(data: bytes) -> typing.Union[int, typing.Any]:
 
 libopus_packet_get_nb_channels = opuslib.api.libopus.opus_packet_get_nb_channels  # NOQA
 # `argtypes` must be a sequence (,) of types!
-libopus_packet_get_nb_channels.argtypes = (ctypes.c_char_p,)
+libopus_packet_get_nb_channels.argtypes = (opuslib.api.c_ubyte_pointer,)
 libopus_packet_get_nb_channels.restype = ctypes.c_int
 
 
 # FIXME: Remove typing.Any once we have a stub for ctypes
 def packet_get_nb_channels(data: bytes) -> typing.Union[int, typing.Any]:
     """Gets the number of channels from an Opus packet"""
-    data_pointer = ctypes.c_char_p(data)
+    data_buffer = ctypes.create_string_buffer(data)
+    data_pointer = ctypes.cast(data_buffer, opuslib.api.c_ubyte_pointer)
 
     result = libopus_packet_get_nb_channels(data_pointer)
 
@@ -115,7 +117,7 @@ def packet_get_nb_channels(data: bytes) -> typing.Union[int, typing.Any]:
 
 
 libopus_packet_get_nb_frames = opuslib.api.libopus.opus_packet_get_nb_frames
-libopus_packet_get_nb_frames.argtypes = (ctypes.c_char_p, ctypes.c_int)
+libopus_packet_get_nb_frames.argtypes = (opuslib.api.c_ubyte_pointer, ctypes.c_int)
 libopus_packet_get_nb_frames.restype = ctypes.c_int
 
 
@@ -125,7 +127,8 @@ def packet_get_nb_frames(
         length: typing.Optional[int] = None
 ) -> typing.Union[int, typing.Any]:
     """Gets the number of frames in an Opus packet"""
-    data_pointer = ctypes.c_char_p(data)
+    data_buffer = ctypes.create_string_buffer(data)
+    data_pointer = ctypes.cast(data_buffer, opuslib.api.c_ubyte_pointer)
 
     if length is None:
         length = len(data)
@@ -140,7 +143,10 @@ def packet_get_nb_frames(
 
 libopus_packet_get_samples_per_frame = \
     opuslib.api.libopus.opus_packet_get_samples_per_frame
-libopus_packet_get_samples_per_frame.argtypes = (ctypes.c_char_p, ctypes.c_int)
+libopus_packet_get_samples_per_frame.argtypes = (
+    opuslib.api.c_ubyte_pointer,
+    ctypes.c_int
+)
 libopus_packet_get_samples_per_frame.restype = ctypes.c_int
 
 
@@ -150,7 +156,8 @@ def packet_get_samples_per_frame(
         fs: int
 ) -> typing.Union[int, typing.Any]:
     """Gets the number of samples per frame from an Opus packet"""
-    data_pointer = ctypes.c_char_p(data)
+    data_buffer = ctypes.create_string_buffer(data)
+    data_pointer = ctypes.cast(data_buffer, opuslib.api.c_ubyte_pointer)
 
     result = libopus_packet_get_samples_per_frame(
         data_pointer,
@@ -166,7 +173,7 @@ def packet_get_samples_per_frame(
 libopus_get_nb_samples = opuslib.api.libopus.opus_decoder_get_nb_samples
 libopus_get_nb_samples.argtypes = (
     DecoderPointer,
-    ctypes.c_char_p,
+    opuslib.api.c_ubyte_pointer,
     ctypes.c_int32
 )
 libopus_get_nb_samples.restype = ctypes.c_int
@@ -194,7 +201,10 @@ def get_nb_samples(
     OPUS_INVALID_PACKET	The compressed data passed is corrupted or of an
         unsupported type
     """
-    result = libopus_get_nb_samples(decoder_state, packet, length)
+    packet_buffer = ctypes.create_string_buffer(packet)
+    packet_pointer = ctypes.cast(packet_buffer, opuslib.api.c_ubyte_pointer)
+
+    result = libopus_get_nb_samples(decoder_state, packet_pointer, length)
 
     if result < 0:
         raise opuslib.exceptions.OpusError(result)
@@ -205,7 +215,7 @@ def get_nb_samples(
 libopus_decode = opuslib.api.libopus.opus_decode
 libopus_decode.argtypes = (
     DecoderPointer,
-    ctypes.c_char_p,
+    opuslib.api.c_ubyte_pointer,
     ctypes.c_int32,
     opuslib.api.c_int16_pointer,
     ctypes.c_int,
@@ -234,10 +244,15 @@ def decode(  # pylint: disable=too-many-arguments
     pcm_samples = frame_size * channels
     pcm = (ctypes.c_int16 * pcm_samples)()
     pcm_pointer = ctypes.cast(pcm, opuslib.api.c_int16_pointer)
+    opus_data_buffer = ctypes.create_string_buffer(opus_data)
+    opus_data_pointer = ctypes.cast(
+        opus_data_buffer,
+        opuslib.api.c_ubyte_pointer
+    )
 
     result = libopus_decode(
         decoder_state,
-        opus_data,
+        opus_data_pointer,
         length,
         pcm_pointer,
         frame_size,
@@ -253,7 +268,7 @@ def decode(  # pylint: disable=too-many-arguments
 libopus_decode_float = opuslib.api.libopus.opus_decode_float
 libopus_decode_float.argtypes = (
     DecoderPointer,
-    ctypes.c_char_p,
+    opuslib.api.c_ubyte_pointer,
     ctypes.c_int32,
     opuslib.api.c_float_pointer,
     ctypes.c_int,
@@ -282,10 +297,15 @@ def decode_float(  # pylint: disable=too-many-arguments
     pcm_samples = frame_size * channels
     pcm = (ctypes.c_float * pcm_samples)()
     pcm_pointer = ctypes.cast(pcm, opuslib.api.c_float_pointer)
+    opus_data_buffer = ctypes.create_string_buffer(opus_data)
+    opus_data_pointer = ctypes.cast(
+        opus_data_buffer,
+        opuslib.api.c_ubyte_pointer
+    )
 
     result = libopus_decode_float(
         decoder_state,
-        opus_data,
+        opus_data_pointer,
         length,
         pcm_pointer,
         frame_size,

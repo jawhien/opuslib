@@ -90,7 +90,7 @@ libopus_encode.argtypes = (
     EncoderPointer,
     opuslib.api.c_int16_pointer,
     ctypes.c_int,
-    ctypes.c_char_p,
+    opuslib.api.c_ubyte_pointer,
     ctypes.c_int32
 )
 libopus_encode.restype = ctypes.c_int32
@@ -126,7 +126,7 @@ def encode(
         Use OPUS_SET_BITRATE to control the bitrate.
     """
     pcm_pointer = ctypes.cast(pcm_data, opuslib.api.c_int16_pointer)
-    opus_data = (ctypes.c_char * max_data_bytes)()
+    opus_data = (ctypes.c_ubyte * max_data_bytes)()
 
     result = libopus_encode(
         encoder_state,
@@ -139,7 +139,7 @@ def encode(
     if result < 0:
         raise opuslib.OpusError(result)
 
-    return array.array('b', opus_data[:result]).tobytes()
+    return array.array('B', opus_data[:result]).tobytes()
 
 
 libopus_encode_float = opuslib.api.libopus.opus_encode_float
@@ -147,7 +147,7 @@ libopus_encode_float.argtypes = (
     EncoderPointer,
     opuslib.api.c_float_pointer,
     ctypes.c_int,
-    ctypes.c_char_p,
+    opuslib.api.c_ubyte_pointer,
     ctypes.c_int32
 )
 libopus_encode_float.restype = ctypes.c_int32
@@ -162,7 +162,7 @@ def encode_float(
 ) -> typing.Union[bytes, typing.Any]:
     """Encodes an Opus frame from floating point input"""
     pcm_pointer = ctypes.cast(pcm_data, opuslib.api.c_float_pointer)
-    opus_data = (ctypes.c_char * max_data_bytes)()
+    opus_data = (ctypes.c_ubyte * max_data_bytes)()
 
     result = libopus_encode_float(
         encoder_state,
@@ -175,7 +175,7 @@ def encode_float(
     if result < 0:
         raise opuslib.OpusError(result)
 
-    return array.array('b', opus_data[:result]).tobytes()
+    return array.array('B', opus_data[:result]).tobytes()
 
 
 destroy = opuslib.api.libopus.opus_encoder_destroy
