@@ -106,7 +106,7 @@ class EncoderTest(unittest.TestCase):
              opuslib.APPLICATION_RESTRICTED_LOWDELAY)
         )
 
-    def test_bitrate(self):
+    def test_bitrate_clamps_to_stereo_maximum(self):
         enc = opuslib.api.encoder.create_state(
             48000, 2, opuslib.APPLICATION_AUDIO)
 
@@ -115,8 +115,7 @@ class EncoderTest(unittest.TestCase):
 
         value = opuslib.api.encoder.encoder_ctl(
             enc, opuslib.api.ctl.get_bitrate)
-        self.assertLess(value, 700000)
-        self.assertGreater(value, 256000)
+        self.assertEqual(value, 1500000)
 
         opuslib.api.encoder.destroy(enc)
 
