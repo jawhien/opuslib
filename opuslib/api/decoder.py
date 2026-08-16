@@ -227,7 +227,7 @@ libopus_decode.restype = ctypes.c_int
 # FIXME: Remove typing.Any once we have a stub for ctypes
 def decode(  # pylint: disable=too-many-arguments
         decoder_state: ctypes.Structure,
-        opus_data: bytes,
+        opus_data: typing.Optional[bytes],
         length: int,
         frame_size: int,
         decode_fec: bool,
@@ -244,11 +244,15 @@ def decode(  # pylint: disable=too-many-arguments
     pcm_samples = frame_size * channels
     pcm = (ctypes.c_int16 * pcm_samples)()
     pcm_pointer = ctypes.cast(pcm, opuslib.api.c_int16_pointer)
-    opus_data_buffer = ctypes.create_string_buffer(opus_data)
-    opus_data_pointer = ctypes.cast(
-        opus_data_buffer,
-        opuslib.api.c_ubyte_pointer
-    )
+
+    if opus_data is None:
+        opus_data_pointer = None
+    else:
+        opus_data_buffer = ctypes.create_string_buffer(opus_data)
+        opus_data_pointer = ctypes.cast(
+            opus_data_buffer,
+            opuslib.api.c_ubyte_pointer
+        )
 
     result = libopus_decode(
         decoder_state,
@@ -280,7 +284,7 @@ libopus_decode_float.restype = ctypes.c_int
 # FIXME: Remove typing.Any once we have a stub for ctypes
 def decode_float(  # pylint: disable=too-many-arguments
         decoder_state: ctypes.Structure,
-        opus_data: bytes,
+        opus_data: typing.Optional[bytes],
         length: int,
         frame_size: int,
         decode_fec: bool,
@@ -297,11 +301,15 @@ def decode_float(  # pylint: disable=too-many-arguments
     pcm_samples = frame_size * channels
     pcm = (ctypes.c_float * pcm_samples)()
     pcm_pointer = ctypes.cast(pcm, opuslib.api.c_float_pointer)
-    opus_data_buffer = ctypes.create_string_buffer(opus_data)
-    opus_data_pointer = ctypes.cast(
-        opus_data_buffer,
-        opuslib.api.c_ubyte_pointer
-    )
+
+    if opus_data is None:
+        opus_data_pointer = None
+    else:
+        opus_data_buffer = ctypes.create_string_buffer(opus_data)
+        opus_data_pointer = ctypes.cast(
+            opus_data_buffer,
+            opuslib.api.c_ubyte_pointer
+        )
 
     result = libopus_decode_float(
         decoder_state,

@@ -46,17 +46,19 @@ class Decoder(object):
     # FIXME: Remove typing.Any once we have a stub for ctypes
     def decode(
             self,
-            opus_data: bytes,
+            opus_data: typing.Optional[bytes],
             frame_size: int,
             decode_fec: bool = False
         ) -> typing.Union[bytes, typing.Any]:
         """
         Decodes given Opus data to PCM.
         """
+        length = 0 if opus_data is None else len(opus_data)
+
         return opuslib.api.decoder.decode(
             self.decoder_state,
             opus_data,
-            len(opus_data),
+            length,
             frame_size,
             decode_fec,
             channels=self._channels
@@ -65,17 +67,19 @@ class Decoder(object):
     # FIXME: Remove typing.Any once we have a stub for ctypes
     def decode_float(
             self,
-            opus_data: bytes,
+            opus_data: typing.Optional[bytes],
             frame_size: int,
             decode_fec: bool = False
         ) -> typing.Union[bytes, typing.Any]:
         """
         Decodes given Opus data to PCM.
         """
+        length = 0 if opus_data is None else len(opus_data)
+
         return opuslib.api.decoder.decode_float(
             self.decoder_state,
             opus_data,
-            len(opus_data),
+            length,
             frame_size,
             decode_fec,
             channels=self._channels
