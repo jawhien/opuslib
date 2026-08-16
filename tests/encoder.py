@@ -22,6 +22,17 @@ class EncoderTest(unittest.TestCase):
     From the `tests/test_opus_api.c`
     """
 
+    def test_get_size(self):
+        """Invalid channel counts return zero."""
+
+        for channels in range(4):
+            size = opuslib.api.encoder.get_size(channels)
+
+            if channels in (1, 2):
+                self.assertGreater(size, 0)
+            else:
+                self.assertEqual(0, size)
+
     def _test_unsupported_sample_rates(self):
         for cxx in range(0, 4):
             for ixx in range(-7, 96000 + 1):

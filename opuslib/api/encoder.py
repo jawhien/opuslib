@@ -40,8 +40,6 @@ libopus_get_size.restype = ctypes.c_int
 # FIXME: Remove typing.Any once we have a stub for ctypes
 def get_size(channels: int) -> typing.Union[int, typing.Any]:
     """Gets the size of an OpusEncoder structure."""
-    if channels not in (1, 2):
-        raise ValueError('Wrong channels value. Must be equal to 1 or 2')
     return libopus_get_size(channels)
 
 
