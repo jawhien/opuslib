@@ -3,12 +3,16 @@ python-opus
 
 Python bindings to the libopus, IETF low-delay audio codec
 
+This repository is a fork of [orion-labs/opuslib](https://github.com/orion-labs/opuslib).
+
 Testing
 --------
 
-Run tests with a python setup.py test command or look for [Travis build logs](http://travis-ci.org/#!/svartalf/python-opus).
+Run tests with:
 
-![](https://secure.travis-ci.org/svartalf/python-opus.png)
+```bash
+python -m unittest discover -s tests -p "test_*.py" -v
+```
 
 Contributing
 -------------

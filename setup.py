@@ -52,13 +52,16 @@ if sys.platform.startswith("win") and bdist_wheel is not None:
 
 setuptools.setup(
     name='opuslib',
-    version='3.0.4',
+    version='3.0.5',
     author='Никита Кузнецов',
     author_email='self@svartalf.info',
     maintainer='Orion Labs, Inc.',
     maintainer_email='code@orionlabs.io',
     license='BSD 3-Clause License',
     url='https://github.com/jawhien/opuslib',
+    project_urls={
+        'Original repository': 'https://github.com/orion-labs/opuslib',
+    },
     description='Python bindings to the libopus, IETF low-delay audio codec',
     packages=('opuslib', 'opuslib.api'),
     package_data=package_data,

@@ -13,6 +13,7 @@ Python bindings to the libopus, IETF low-delay audio codec
 :copyright: Copyright (c) 2012, SvartalF
 :license: BSD 3-Clause License
 :source: <https://github.com/jawhien/opuslib/>
+:original source: <https://github.com/orion-labs/opuslib/>
 
 """
 
@@ -27,4 +28,4 @@ from .classes import Encoder, Decoder  # NOQA
 __author__ = 'Никита Кузнецов <self@svartalf.info>'
 __copyright__ = 'Copyright (c) 2012, SvartalF'
 __license__ = 'BSD 3-Clause License'
-__version__ = '3.0.4'
+__version__ = '3.0.5'
