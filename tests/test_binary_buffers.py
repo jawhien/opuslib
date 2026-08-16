@@ -46,6 +46,22 @@ class BinaryBufferTest(unittest.TestCase):
 
         self.assertEqual(len(pcm), len(decoded))
 
+    def test_custom_max_data_bytes_limits_encoded_packet(self):
+        fs = 48000
+        channels = 2
+        frame_size = 960
+        samples = []
+
+        for i in range(frame_size):
+            value = int(12000 * math.sin(2 * math.pi * 440 * i / fs))
+            samples.extend([value, value])
+
+        pcm = struct.pack('<' + 'h' * len(samples), *samples)
+        encoder = opuslib.Encoder(fs, channels, opuslib.APPLICATION_AUDIO)
+        packet = encoder.encode(pcm, frame_size, max_data_bytes=64)
+
+        self.assertLessEqual(len(packet), 64)
+
 
 if __name__ == '__main__':
     unittest.main()
